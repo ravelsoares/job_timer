@@ -1,7 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:job_timer/app/entities/project_status.dart';
 
-class ProjectStatusConverter implements TypeConverter<ProjectStatus, int> {
+class ProjectStatusConverter extends TypeConverter<ProjectStatus, int> {
   const ProjectStatusConverter();
 
   @override

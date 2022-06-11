@@ -1,97 +1,82 @@
+import 'package:asuka/asuka.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
-import 'package:job_timer/app/entities/project.dart';
-import 'package:job_timer/app/entities/project_status.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:job_timer/app/modules/home/controller/home_controller.dart';
 import 'package:job_timer/app/modules/home/widgets/header_projects_menu.dart';
-import '../../core/database/database.dart';
+import 'package:job_timer/app/view_models/project_model.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final HomeController controller;
+  const HomePage({required this.controller, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: const Drawer(
-        child: SafeArea(
-          child: ListTile(
-            title: Text('Sair'),
+    return BlocListener<HomeController, HomeState>(
+      listener: (context, state) {
+        AsukaSnackbar.alert('Erro ao carregar projetos').show();
+      },
+      listenWhen: (previous, current) => current.status == HomeStatus.failure,
+      bloc: controller,
+      child: Scaffold(
+        drawer: const Drawer(
+          child: SafeArea(
+            child: ListTile(
+              title: Text('Sair'),
+            ),
           ),
         ),
-      ),
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            const SliverAppBar(
-              title: Text('Projetos'),
-              expandedHeight: 100,
-              toolbarHeight: 100,
-              centerTitle: true,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(15),
+        body: SafeArea(
+          child: CustomScrollView(
+            slivers: [
+              const SliverAppBar(
+                title: Text('Projetos'),
+                expandedHeight: 100,
+                toolbarHeight: 100,
+                centerTitle: true,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(15),
+                  ),
                 ),
               ),
-            ),
-            SliverPersistentHeader(
-              delegate: HeaderProjectsMenu(),
-              pinned: true,
-            ),
-            SliverList(
-                delegate: SliverChildListDelegate([
-              Container(
-                color: Colors.blue,
-                height: 200,
+              SliverPersistentHeader(
+                delegate: HeaderProjectsMenu(),
+                pinned: true,
               ),
-              Container(
-                color: Colors.blue,
-                height: 200,
+              BlocSelector<HomeController, HomeState, bool>(
+                bloc: controller,
+                selector: (state) => state.status == HomeStatus.loading,
+                builder: (context, showLoading) {
+                  return SliverVisibility(
+                    visible: showLoading,
+                    sliver: const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 50,
+                        child: Center(
+                          child: CircularProgressIndicator.adaptive(),
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
-              Container(
-                color: Colors.blue,
-                height: 200,
+              BlocSelector<HomeController, HomeState, List<ProjectModel>>(
+                bloc: controller,
+                selector: ((state) => state.projects),
+                builder: (context, projects) {
+                  return SliverList(
+                      delegate: SliverChildListDelegate(projects
+                          .map((project) => ListTile(
+                                title: Text(
+                                  project.name,
+                                ),
+                                subtitle: Text('${project.estimate}h'),
+                              ))
+                          .toList()));
+                },
               ),
-              Container(
-                color: Colors.blue,
-                height: 200,
-              ),
-              Container(
-                color: Colors.blue,
-                height: 200,
-              ),
-              Container(
-                color: Colors.blue,
-                height: 200,
-              ),
-              Container(
-                color: Colors.blue,
-                height: 200,
-              ),
-              Container(
-                color: Colors.blue,
-                height: 200,
-              ),
-              Container(
-                color: Colors.blue,
-                height: 200,
-              ),
-              Container(
-                color: Colors.blue,
-                height: 200,
-              ),
-              Container(
-                color: Colors.blue,
-                height: 200,
-              ),
-              Container(
-                color: Colors.blue,
-                height: 200,
-              ),
-              Container(
-                color: Colors.blue,
-                height: 200,
-              ),
-            ]))
-          ],
+            ],
+          ),
         ),
       ),
     );
