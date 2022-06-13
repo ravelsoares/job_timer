@@ -7,7 +7,7 @@ import 'package:job_timer/app/view_models/project_model.dart';
 part 'project_register_status.dart';
 
 class ProjectRegisterController extends Cubit<ProjectResgisterStatus> {
-  ProjectService _projectService;
+  final ProjectService _projectService;
 
   ProjectRegisterController({required ProjectService projectService})
       : _projectService = projectService,
