@@ -46,7 +46,7 @@ class ProjectServiceImpl implements ProjectService {
   }
 
   @override
-  Future<void> finishProject(int projectId) async {
+  Future<void> finishProject(int projectId) =>
     _projectRepository.finishProject(projectId);
-  }
+  
 }
