@@ -28,6 +28,11 @@ class HomeController extends Cubit<HomeState> {
   Future<void> filter(ProjectStatus projectStatus) async {
     emit(state.copyWith(status: HomeStatus.loading, projects: []));
     final projects = await _projectService.findByStatus(projectStatus);
-    emit(state.copyWith(status: HomeStatus.complete, projects: projects, projectFilter: projectStatus));
+    emit(state.copyWith(
+        status: HomeStatus.complete,
+        projects: projects,
+        projectFilter: projectStatus));
   }
+
+  void updateList() => filter(state.projectFilter);
 }
